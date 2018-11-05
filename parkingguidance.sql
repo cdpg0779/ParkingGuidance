@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50712
 File Encoding         : 65001
 
-Date: 2018-11-05 09:42:28
+Date: 2018-11-05 15:20:43
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -39,6 +39,25 @@ INSERT INTO `t_deptment` VALUES ('7851fbadfa8c11e7b46a44a842f4c4c8', '市场部'
 INSERT INTO `t_deptment` VALUES ('7a82d8a5fcc511e7b46a44a842f4c4c8', '系统工程部', '2', 'fa585205d3050aa123de76e8c68b4032', '1');
 INSERT INTO `t_deptment` VALUES ('810c4863fa8b11e7b46a44a842f4c4c8', '综合部', '6', '67426e703496cb7027364e2de94e31e4', '0');
 INSERT INTO `t_deptment` VALUES ('fa585205d3050aa123de76e8c68b4012', '软件开发部', '4', 'fa585205d3050aa123de76e8c68b4032', '1');
+
+-- ----------------------------
+-- Table structure for t_function_menulist
+-- ----------------------------
+DROP TABLE IF EXISTS `t_function_menulist`;
+CREATE TABLE `t_function_menulist` (
+  `id` varchar(255) NOT NULL,
+  `functionId` varchar(255) DEFAULT NULL,
+  `menuListId` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of t_function_menulist
+-- ----------------------------
+INSERT INTO `t_function_menulist` VALUES ('083D45E18C04C1A4928FD70A4FA49019', '111d79c5650e11e7a3f7184f320641b8', '5210610c1a6911e7803f33470e8f4c17');
+INSERT INTO `t_function_menulist` VALUES ('2E4642B418EDF36FF60E4C36E417EC25', 'ac1201b41a6711e7803f3c970e8f4c17', '54342141335592E4FC69DF2D1AB6670A');
+INSERT INTO `t_function_menulist` VALUES ('52D90A44403116C6E7C46D8B61B8030E', 'b61a8b231a6711e7803f3c970e8f4c17', 'EEBAD1904C75867FBB73191681217C11');
+INSERT INTO `t_function_menulist` VALUES ('6FB7BB8E1E2FB94F5D27151900769414', 'e252451c920311e79cc1184f320641b8', '5935F9DD6721803D1467EA432E9D86BB');
 
 -- ----------------------------
 -- Table structure for t_role_function_map
@@ -202,6 +221,7 @@ CREATE TABLE `t_user_function` (
   `funccode` int(11) NOT NULL,
   `btnid` varchar(200) DEFAULT NULL,
   `description` varchar(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `t_user_function_ix1` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -209,17 +229,43 @@ CREATE TABLE `t_user_function` (
 -- ----------------------------
 -- Records of t_user_function
 -- ----------------------------
-INSERT INTO `t_user_function` VALUES ('111d79c5650e11e7a3f7184f320641b8', '10', 'postPDF_edit_btn', '查看收文');
-INSERT INTO `t_user_function` VALUES ('30295d9c1a6711e7803f3c970e8f4c17', '1', null, '修改密码');
-INSERT INTO `t_user_function` VALUES ('4afb458c1a6711e7803f3c970e8f4c17', '2', null, '重置密码');
-INSERT INTO `t_user_function` VALUES ('5210610c1a6911e7803f3c970e8f4c17', '9', null, '接收任务');
-INSERT INTO `t_user_function` VALUES ('5b3008af1a6711e7803f3c970e8f4c17', '3', null, '查询用户账号');
-INSERT INTO `t_user_function` VALUES ('6bd6338e1a6711e7803f3c970e8f4c17', '4', 'users_add_btn', '新增用户账号');
-INSERT INTO `t_user_function` VALUES ('7bdf24061a6711e7803f3c970e8f4c17', '5', 'users_edit_btn', '修改用户账号');
-INSERT INTO `t_user_function` VALUES ('8567708d1a6711e7803f3c970e8f4c17', '6', 'users_del_btn', '删除用户账号');
-INSERT INTO `t_user_function` VALUES ('ac1201b41a6711e7803f3c970e8f4c17', '7', 'users_role_btn', '用户角色管理');
-INSERT INTO `t_user_function` VALUES ('b61a8b231a6711e7803f3c970e8f4c17', '8', 'sys_all_btn', 'APP功能管理');
-INSERT INTO `t_user_function` VALUES ('e252451c920311e79cc1184f320641b8', '11', 'unit_all_btn', '单位管理');
+INSERT INTO `t_user_function` VALUES ('111d79c5650e11e7a3f7184f320641b8', '10', '', '用户账号', 'jiedian');
+INSERT INTO `t_user_function` VALUES ('30295d9c1a6711e7803f3c970e8f4c17', '1', null, '修改密码', null);
+INSERT INTO `t_user_function` VALUES ('4afb458c1a6711e7803f3c970e8f4c17', '2', null, '重置密码', null);
+INSERT INTO `t_user_function` VALUES ('5210610c1a6911e7803f3c970e8f4c17', '9', null, '接收任务', null);
+INSERT INTO `t_user_function` VALUES ('5b3008af1a6711e7803f3c970e8f4c17', '3', null, '查询用户账号', null);
+INSERT INTO `t_user_function` VALUES ('6bd6338e1a6711e7803f3c970e8f4c17', '4', 'users_add_btn', '新增用户账号', null);
+INSERT INTO `t_user_function` VALUES ('7bdf24061a6711e7803f3c970e8f4c17', '5', 'users_edit_btn', '修改用户账号', null);
+INSERT INTO `t_user_function` VALUES ('8567708d1a6711e7803f3c970e8f4c17', '6', 'users_del_btn', '删除用户账号', null);
+INSERT INTO `t_user_function` VALUES ('ac1201b41a6711e7803f3c970e8f4c17', '7', 'role_all_btn', '用户角色', 'jiedian');
+INSERT INTO `t_user_function` VALUES ('b61a8b231a6711e7803f3c970e8f4c17', '8', 'sys_all_btn', '功能管理', 'jiedian');
+INSERT INTO `t_user_function` VALUES ('e252451c920311e79cc1184f320641b8', '11', 'unit_all_btn', '单位管理', 'jiedian');
+
+-- ----------------------------
+-- Table structure for t_user_menulist
+-- ----------------------------
+DROP TABLE IF EXISTS `t_user_menulist`;
+CREATE TABLE `t_user_menulist` (
+  `ID` varchar(255) NOT NULL,
+  `IframeId` varchar(255) DEFAULT NULL,
+  `IframeName` varchar(255) DEFAULT NULL,
+  `IframeSrc` varchar(255) DEFAULT NULL,
+  `ItemId` varchar(255) DEFAULT NULL,
+  `Title` varchar(255) DEFAULT NULL,
+  `ParentsDir` varchar(255) DEFAULT NULL,
+  `ParentsId` varchar(255) DEFAULT NULL,
+  `orderby` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of t_user_menulist
+-- ----------------------------
+INSERT INTO `t_user_menulist` VALUES ('0B5CBC115A5C53912A0CC68E89539060', '', '', '', '', '用户管理', '', '1', '2000');
+INSERT INTO `t_user_menulist` VALUES ('5210610c1a6911e7803f33470e8f4c17', 'usersui', 'usersui', '/users', 'useraccount', '用户账号', '用户管理', '0B5CBC115A5C53912A0CC68E89539060', '2001');
+INSERT INTO `t_user_menulist` VALUES ('54342141335592E4FC69DF2D1AB6670A', 'userroleui', 'userroleui', '/users/userrole', 'userrole', '用户角色', '用户管理', '0B5CBC115A5C53912A0CC68E89539060', '2002');
+INSERT INTO `t_user_menulist` VALUES ('5935F9DD6721803D1467EA432E9D86BB', 'appfunctionui', 'appfunctionui', '/users/appfunction', 'appfunction', '功能管理', '用户管理', '0B5CBC115A5C53912A0CC68E89539060', '2003');
+INSERT INTO `t_user_menulist` VALUES ('EEBAD1904C75867FBB73191681217C11', 'userunitui', 'userunitui', '/users/userunit', 'userunit', '部门管理', '用户管理', '0B5CBC115A5C53912A0CC68E89539060', '2004');
 
 -- ----------------------------
 -- Table structure for t_user_role
