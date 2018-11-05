@@ -220,10 +220,10 @@ var roleStore = Ext.create('Ext.data.Store', {
                                 Ext.Ajax.request({
                                     url: '/users/getRoleIdByBtnId',
                                     params: {
-                                        add: "users_add_btn",
-                                        edit: "users_edit_btn",
-                                        del: "users_del_btn",
-                                        role: "users_role_btn"
+                                        add: "users_all_btn",
+                                        edit: "users_all_btn",
+                                        del: "users_all_btn",
+                                        role: "users_all_btn"
                                     },
                                     method: 'POST',
                                     success: function (r, o) {
@@ -271,8 +271,8 @@ var roleStore = Ext.create('Ext.data.Store', {
                 handler: editusersrole,
                 id: 'users_role_btn'
             }
-                , '-',
-            { text: '测试手机接口', iconCls: 'Delete', handler: testmob }
+                //     , '-',
+                // { text: '测试手机接口', iconCls: 'Delete', handler: testmob }
             ]
         });
 

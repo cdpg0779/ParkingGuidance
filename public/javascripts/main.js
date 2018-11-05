@@ -50,12 +50,12 @@ var menuList = [];
                     let element = MenuList[i];
                     let model = menu_children.find(x => x.text == element.ParentsDir);
                     if (model) {
-                        model.children.push({ text: element.Title, leaf: true });
+                        model.children.push({ text: element.description, leaf: true });
                     } else {
                         menu_children.push({
                             text: element.ParentsDir,
                             leaf: false,
-                            children: [{ text: element.Title, leaf: true }]
+                            children: [{ text: element.description, leaf: true }]
                         })
                     }
                 }
@@ -159,14 +159,14 @@ function handlerMenus(menutext) {
     var tab = Ext.getCmp('mainpanel');
     for (let i = 0; i < MenuList.length; i++) {
         let element = MenuList[i];
-        if (element.Title == menutext) {
+        if (element.description == menutext) {
             if (Ext.getCmp(element.ItemId)) {
                 tab.setActiveTab(element.ItemId);
                 return;
             }
             var item = {
                 id: element.ItemId,
-                title: element.Title,
+                title: element.description,
                 html: '<iframe id="' + element.IframeId + '" name="' + element.IframeName + '" src="' + element.IframeSrc + '" style="width:100%; height:100%;" frameborder="0"></iframe>'
             };
             tab.add(item);

@@ -660,30 +660,22 @@ router.post("/appfunctionall", function (req, res, next) {
     let _start = parseInt(req.body.start);
     let _endrow = _start + _pageSize;
 
-    let sql = "select (select count(id) as total from t_user_function) total,id,funccode,description from t_user_function order by funccode asc limit ?,?";
+    let sql = "select (select count(id) as total from t_user_function) total,t_user_function.* from t_user_function order by orderby asc limit ?,?";
     let pms = [_start, _pageSize];
     mysqlClient.query(sql, pms, function (err, recs) {
-        let strJson = "{\"rows\":[";
         let sum = 0;
+        let ren = { state: 0, rows: [], total: 0 };
         if (err) {
             console.log(err);
         } else {
             let _len = recs.length;
             if (_len > 0) {
-                let _row;
-                for (let i = 0; i < _len; i++) {
-                    _row = recs[i];
-                    if (i == 0)
-                        sum = _row.total;
-                    let strTemp = "{\"id\":\"" + _row.id + "\",\"funccode\":" + _row.funccode + ",\"description\":\"" + _row.description + "\"}";
-                    if (i < (_len - 1))
-                        strTemp += ",";
-                    strJson += strTemp;
-                }
+                sum = recs[0].total
             }
+            ren.total = sum;
+            ren.rows = recs;
         }
-        strJson += "],\"total\":" + sum + "}";
-        res.send(strJson);
+        res.send(JSON.stringify(ren));
     });
 });
 
@@ -1305,22 +1297,11 @@ router.post('/getuserall', function (req, res, next) {
 });
 
 
-/**
- * 渲染菜单节点管理页面
- */
-router.get("/menuList", function (req, res, next) {
-    let b = GetUserPermissions(req);
-    if (!b) {
-        res.redirect('/');
-        return;
-    }
-    res.render("menuList");
-});
 
 
 //得到所有父节点
-router.get("/getParentsMenuList", function (req, res, next) {
-    let sql = "select * from t_user_menuList where ParentsId='1' order by orderby asc";
+router.post("/getParentsFunction", function (req, res, next) {
+    let sql = "select * from t_user_function where ParentsId='1' and type='jiedian' order by orderby asc";
     mysqlClient.query(sql, [], function (err, recs) {
         if (err) {
             console.log(err);
@@ -1331,7 +1312,7 @@ router.get("/getParentsMenuList", function (req, res, next) {
         let data = [];
         for (let i = 0; i < recs.length; i++) {
             let element = recs[i];
-            data.push({ id: element.ID, name: element.Title });
+            data.push({ id: element.id, name: element.description });
         }
         ren.rows = data;
         res.send(JSON.stringify(ren));
@@ -1341,13 +1322,9 @@ router.get("/getParentsMenuList", function (req, res, next) {
 //得到指定用户所拥有的菜单节点访问权限
 router.post('/GetMenuList', function (req, res, next) {
     let userid = req.body.userid;
-    let sql = "SELECT t_user_menulist.* " +
-        "FROM t_function_menuList " +
-        "LEFT JOIN t_user_function ON t_function_menuList.functionId = t_user_function.id " +
-        "LEFT JOIN t_user_menuList ON t_function_menuList.menuListId = t_user_menulist.ID " +
-        "WHERE t_user_function.id IN ( " +
+    let sql = "SELECT t_user_function.* from t_user_function WHERE t_user_function.id IN ( " +
         "SELECT funcid FROM t_role_function_map WHERE roleid = ( SELECT roleid FROM t_user_role_relation WHERE userid = '" + userid + "') " +
-        ") and t_user_function.type='jiedian' and t_user_menuList.ParentsId!='1'";
+        ") and t_user_function.type='jiedian' and t_user_function.ParentsId!='1'";
     mysqlClient.query(sql, [], function (err, recs) {
         if (err) {
             console.log(err);
