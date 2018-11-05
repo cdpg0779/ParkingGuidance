@@ -1,0 +1,44 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+p{color:#0000ff;}
+
+a {
+  color: #00B7FF;
+}
+
+#accountbox{
+	width:400px;
+	margin:100px auto;
+	text-align:center;
+}
+
+.sysname{
+	height:40px;
+	padding-left:30px;
+	font:bold 18px 宋体;
+	color:white;
+	background:#add2ed;
+}
+
+.rightfunc{
+	width:200px;
+	float:right;
+	color:grey;
+	font:bold 14px 宋体;
+	margin-top: 40px;
+
+}
+
+.rightfunc a{
+	color:grey;
+}
+.rightfunc a:hover{
+	color:blue;
+}
+
+.displayonerow{
+	float:left;
+	margin:10px;
+}

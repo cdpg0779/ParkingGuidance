@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%=global.title%>--用户登录</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel="stylesheet" href="css/login.css" />
+  <link rel='stylesheet' href='/resources/ext4.2/resources/css/ext-all.css' />
+  <link rel='stylesheet' href='/resources/ext4.2/resources/css/icon.css' />
+  <script src='/resources/ext4.2/bootstrap.js'></script>
+  <script src='/resources/ext4.2/locale/ext-lang-zh_CN.js'></script>
+  <script type="text/javascript" src="/javascripts/datetime/UX_TimePickerField.js"></script>
+  <script type="text/javascript" src="/javascripts/datetime/UX_DateTimePicker.js"></script>
+  <script type="text/javascript" src="/javascripts/datetime/UX_DateTimeMenu.js"></script>
+  <script type="text/javascript" src="/javascripts/datetime/UX_DateTimeField.js"></script>
+  <script type="text/javascript" src="/javascripts/JQ/jquery-3.2.1.min.js"></script>
+  <script src='/javascripts/login.js'></script>
+  <script>
+    Ext.Loader.setConfig({
+      enabled: true,
+      paths: {
+        'ux': '/javascripts/ux'
+      }
+    });
+    function keyLogin() {
+      if (event.keyCode == 13)  //回车键的键值为13
+        document.getElementById("btn1").click(); //调用登录按钮的登录事件
+    }
+
+
+
+    Ext.onReady(function () {
+      refreshCode();
+      $('#img_code').click(function () {
+        refreshCode();
+      })
+      // Ext.Ajax.request({
+      //   url: '/GetPng',
+      //   method: 'POST',
+      //   success: function (response, options) {
+      //     var joRes = Ext.JSON.decode(response.responseText);
+      //     Ext.getDom("img_code").src = joRes.data;
+      //   },
+      //   failure: function (response, options) {
+      //     Ext.MessageBox.alert('失败', '请求超时或网络故障,错误码：' + response.status);
+      //   }
+      // });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="login">
+    <h2 style="margin-top:10px;text-align:center;color:white;font-size:40px;">
+      <%=global.title%>
+    </h2>
+    <!-- <h2 style="text-align:center;color:white;font-size:30px"></h2> -->
+    <DIV class="logo"></DIV>
+
+    <div class="login_box">
+      <center>
+        <font style="color:white;font-size:10px;">
+          <b>用户名：</b>
+        </font>
+        <input class="admin" type="text" id="usr" />
+        <br />
+        <font style="color:white;font-size:10px">
+          <b>密&nbsp;&nbsp;&nbsp;码：</b>
+        </font>
+        <input class="passWord" type="password" id="pwd" />
+        <br />
+        <font style="color:white;font-size:10px;margin-left: 50px;">
+          <b>验证码：</b>
+        </font>
+        <input class="pngBox" type="text" id="yanzhengma" onkeydown="keyLogin()" />
+        <img class="png" id="img_code" src="" title="点击刷新验证码" />
+        <input class="submit" type="button" id="btn1" onclick="loginNow()" />
+      </center>
+      <div class="clear"></div>
+    </div>
+
+  </div>
+  <div id="copyright">
+    <strong>
+      <div></div>
+    </strong>
+  </div>
+</body>
+
+</html>

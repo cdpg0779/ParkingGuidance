@@ -1,0 +1,23 @@
+{
+  "name": "MyFramework",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "ejs": "~2.4.1",
+    "express": "~4.13.4",
+    "express-session": "latest",
+    "morgan": "~1.7.0",
+    "mysql": "latest",
+    "serve-favicon": "~2.3.0",
+    "ws": "^2.3.1"
+  },
+  "devDependencies": {
+    "soap": "^0.19.0"
+  }
+}

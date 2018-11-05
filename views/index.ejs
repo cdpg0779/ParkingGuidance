@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>
+    <%=global.title%>--主页面
+  </title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='/stylesheets/css/main_css.css' />
+  <link rel='stylesheet' href='/stylesheets/css/iconfont.css' />
+  <link rel='stylesheet' href='/resources/ext4.2/resources/css/ext-all.css' />
+  <script src='/resources/ext4.2/bootstrap.js'></script>
+  <script src='/resources/ext4.2/locale/ext-lang-zh_CN.js'></script>
+  <script src='/javascripts/main.js'></script>
+  <style>
+    /* General Styles */
+
+    center>h4 {
+      color: #c5c5c5;
+      margin-top: 50px;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial;
+      background-color: #fff;
+    }
+
+    ul#three-clean-buttons-freebie {
+      display: table;
+      list-style: none;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    ul#three-clean-buttons-freebie>li {
+      float: left;
+      margin-right: 20px;
+      margin-bottom: 20px;
+      padding: 10px 10px;
+    }
+
+    ul#three-clean-buttons-freebie>li:last-child {
+      margin-right: 0;
+    }
+
+    ul#three-clean-buttons-freebie>li>span {
+      margin-bottom: 10px;
+    }
+  </style>
+  <script>
+    Ext.Loader.setConfig({
+      enabled: true,
+      paths: {
+        'ux': '/javascripts/ux'
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <input id='usrid' type='hidden' value='<%=usr_id %>' />
+  <input id='uname' type='hidden' value='<%=usr_name %>' />
+  <input id='uunit' type='hidden' value='<%=usr_unit %>' />
+  <input id='type' type='hidden' value='<%=type %>' />
+  <input id='role' type='hidden' value='<%=role %>' />
+  <!-- <input type="button" style="width:80px;height:50px;background:url(../../images/xiugai.png);background-size:100%" onclick="resetpwd()"/> -->
+</body>
+
+</html>

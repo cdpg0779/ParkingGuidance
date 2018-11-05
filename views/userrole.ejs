@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>
+		<%=global.title%>--用户权限</title>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<link rel='stylesheet' href='/resources/ext4.2/resources/css/ext-all.css' />
+	<link rel='stylesheet' href='/resources/ext4.2/resources/css/icon.css' />
+	<script src='/resources/ext4.2/bootstrap.js'></script>
+	<script src='/resources/ext4.2/locale/ext-lang-zh_CN.js'></script>
+	<script src='/javascripts/userrole.js'></script>
+	<script>
+		Ext.Loader.setConfig({
+			enabled: true,
+			paths: {
+				'ux': '/javascripts/ux'
+			}
+		});
+	</script>
+</head>
+
+<body>
+	<div id="usr_role" class="displayonerow"></div>
+	<div id="usr_func" class="displayonerow"></div>
+	<div class="displayonerow">
+		<div id="add"></div>
+		<div id="remove"></div>
+		<div id="save"></div>
+	</div>
+	<div id="sys_func" class="displayonerow"></div>
+</body>
+
+</html>
