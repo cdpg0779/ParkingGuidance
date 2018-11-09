@@ -42,8 +42,9 @@ var parentRole = Ext.create('Ext.data.Store', {
         Ext.regModel('AppFunctionContent', {
             fields: [
                 { name: 'id', type: 'string' },
-                { name: 'funccode', type: 'int' },
-                { name: 'description', type: 'string' }
+                { name: 'orderby', type: 'string' },
+                { name: 'description', type: 'string' },
+                { name: 'remark', type: 'string' }
             ]
         });
 
@@ -69,7 +70,7 @@ var parentRole = Ext.create('Ext.data.Store', {
             remoteFilter: true,
             proxy: {
                 type: "ajax",
-                url: "/users/userroleall",
+                url: "/userrole/userroleall",
                 actionMethods: {
                     create: 'POST',
                     read: 'POST',
@@ -77,10 +78,10 @@ var parentRole = Ext.create('Ext.data.Store', {
                     destroy: 'POST'
                 },
                 api: {
-                    read: '/users/userroleall',
-                    create: '/users/adduserrole',
-                    update: '/users/edituserrole',
-                    destroy: '/users/deleteuserrole'
+                    read: '/userrole/userroleall',
+                    create: '/userrole/adduserrole',
+                    update: '/userrole/edituserrole',
+                    destroy: '/userrole/deleteuserrole'
                 },
                 reader: {
                     type: "json",
@@ -104,12 +105,12 @@ var parentRole = Ext.create('Ext.data.Store', {
             remoteFilter: true,
             proxy: {
                 type: "ajax",
-                url: "/users/appfunctionall",
+                url: "/sysfunction/appfunctionall",
                 actionMethods: {
                     read: 'POST'
                 },
                 api: {
-                    read: '/users/appfunctionall'
+                    read: '/sysfunction/appfunctionall'
                 },
                 reader: {
                     type: "json",
@@ -136,14 +137,14 @@ var parentRole = Ext.create('Ext.data.Store', {
             remoteFilter: true,
             proxy: {
                 type: "ajax",
-                url: "/users/getmyfunc",
+                url: "/userrole/getmyfunc",
                 actionMethods: {
                     create: 'POST',
                     read: 'POST'
                 },
                 api: {
-                    read: '/users/getmyfunc',
-                    create: '/users/saverolefunc'
+                    read: '/userrole/getmyfunc',
+                    create: '/userrole/saverolefunc'
                 },
                 reader: {
                     type: "json",
@@ -391,9 +392,9 @@ var parentRole = Ext.create('Ext.data.Store', {
          * 建立显示APP功能总表
          */
         listSysFunction = Ext.create('Ext.ListView', {
-            title: 'APP所有功能',
+            title: '功能列表',
             renderTo: 'sys_func',
-            width: 260,
+            width: 430,
             height: 480,
             store: storeFunction,
             multiSelect: true,
@@ -401,8 +402,9 @@ var parentRole = Ext.create('Ext.data.Store', {
             reserveScrollOffset: true,
             hideHeaders: false,
             columns: [
-                { header: '功能编码', dataIndex: 'funccode', align: 'center', width: 80 },
-                { header: '功能名称', dataIndex: 'description', align: 'center', width: 170 }
+                { header: '功能编码', dataIndex: 'orderby', align: 'center', width: 80 },
+                { header: '功能名称', dataIndex: 'description', align: 'center', width: 170 },
+                { header: '功能描述', dataIndex: 'remark', align: 'center', width: 170 }
             ],
             bbar: [{
                 xtype: 'pagingtoolbar',
@@ -610,7 +612,7 @@ function deleteRole() {
 function fillStoreMem(_roleid) {
     storeMyFunc.removeAll();
     Ext.Ajax.request({
-        url: '/users/getmyfunc',
+        url: '/userrole/getmyfunc',
         params: { roleid: _roleid },
         method: 'POST',
         success: function (response, options) {

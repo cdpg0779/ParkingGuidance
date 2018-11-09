@@ -10,6 +10,9 @@ var ejs = require('ejs');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var route = require('./routes/route');
+var sysfunction = require('./routes/sysfunction');
+var userrole = require('./routes/userrole');
+var backup = require('./routes/backup');
 var app = express();
 global.title = "停车引导寻车系统";
 // view engine setup
@@ -35,8 +38,9 @@ app.use('/sunshine', express.static(path.join(__dirname, 'swagger')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/route', route);
-
-
+app.use('/sysfunction', sysfunction);
+app.use('/userrole', userrole);
+app.use('/backup', backup);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found');

@@ -35,14 +35,17 @@ div,form,img,ul,li,input,p,ul,ol,li,form{margin:0px;padding:0px;border:0px; list
 	width: 100%;
 	height: 240px;
 	top:40%;
+	right: 10%;
+	max-width:450px;
 	/*bottom:300px*/
-	background: url(../img/login_tou.png);
+	background: url(../img/login_tou.png) ;
 }
 #login .logo{
 	height: 20px;
 }
 
 #login .login_box{
+	float:right;
 	position: relative;
 	width: 480px;
 	height: 35px; 

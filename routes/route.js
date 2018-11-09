@@ -3,6 +3,7 @@
  */
 var express = require('express');
 var mysqlClient = require('../dbutil/mysqlclient');
+var DBLog = require('../dbutil/dbLog');
 var router = express.Router();
 
 function GetUserPermissions(req) {

@@ -14,6 +14,12 @@ var parentsFunctionStore = Ext.create('Ext.data.Store', {
 	data: [
 	]
 });
+var typeStore = Ext.create('Ext.data.Store', {
+	fields: ['code', 'name'],
+	data: [{ 'code': 'jiedian', 'name': '菜单节点' },
+	{ 'code': 'anniu', 'name': '按钮功能' }
+	]
+});
 
 
 
@@ -31,8 +37,8 @@ var parentsFunctionStore = Ext.create('Ext.data.Store', {
 		Ext.regModel('functionContent', {
 			fields: [
 				{ name: 'id', type: 'string' },
-				{ name: 'funccode', type: 'string' },
 				{ name: 'btnid', type: 'string' },
+				{ name: 'type', type: 'string' },
 				{ name: 'description', type: 'string' },
 				{ name: 'ParentsDir', type: 'string' },
 				{ name: 'ParentsId', type: 'string' },
@@ -40,7 +46,8 @@ var parentsFunctionStore = Ext.create('Ext.data.Store', {
 				{ name: 'IframeId', type: 'string' },
 				{ name: 'IframeName', type: 'string' },
 				{ name: 'IframeSrc', type: 'string' },
-				{ name: 'ItemId', type: 'string' }
+				{ name: 'ItemId', type: 'string' },
+				{ name: 'remark', type: 'string' }
 			]
 		});
         /**
@@ -54,7 +61,7 @@ var parentsFunctionStore = Ext.create('Ext.data.Store', {
 			remoteFilter: true,
 			proxy: {
 				type: "ajax",
-				url: "/users/appfunctionall",
+				url: "/sysfunction/appfunctionall",
 				actionMethods: {
 					create: 'POST',
 					read: 'POST',
@@ -62,10 +69,10 @@ var parentsFunctionStore = Ext.create('Ext.data.Store', {
 					destroy: 'POST'
 				},
 				api: {
-					read: '/users/appfunctionall',
-					create: '/users/addappfunction',
-					update: '/users/editappfunction',
-					destroy: '/users/deleteappfunction'
+					read: '/sysfunction/appfunctionall',
+					create: '/sysfunction/addfunction',
+					update: '/sysfunction/editfunction',
+					destroy: '/sysfunction/deletefunction'
 				},
 				reader: {
 					type: "json",
@@ -121,11 +128,13 @@ var parentsFunctionStore = Ext.create('Ext.data.Store', {
 			selType: 'checkboxmodel',
 			columns: [{ xtype: 'rownumberer', text: '序号', width: 40, align: 'center' },
 			{ text: '编号', dataIndex: 'id', hidden: true },
-			{ text: '节点名称', dataIndex: 'description', align: 'center', width: 300 },
+			{ text: '功能名称', dataIndex: 'description', align: 'center', width: 200 },
 			{
-				text: '父节点名称', dataIndex: 'ParentsDir', align: 'center', width: 300,
+				text: '父节点名称', dataIndex: 'ParentsDir', align: 'center', width: 200,
 			}, {
-				text: '排序', dataIndex: 'orderby', align: 'center', width: 300,
+				text: '功能描述', dataIndex: 'remark', align: 'center', width: 400,
+			}, {
+				text: '排序', dataIndex: 'orderby', align: 'center', width: 100,
 			}
 			],
 			bbar: [{
@@ -211,28 +220,43 @@ var parentsFunctionStore = Ext.create('Ext.data.Store', {
 function addNewstoreFunction() {
 	_winNew = Ext.create('Ext.Window', {
 		title: '添加菜单节点',
-		width: 250,
+		width: 400,
 		layout: 'vbox',
 		defaults: {
 			xtype: 'textfield'
 		},
 		bodyPadding: 5,
-		items: [{ id: 's_description', fieldLabel: '节点名称', minLength: 2, maxLength: 200, allowBlank: false, width: 200 },
-		{
-			id: 's_ParentsDir',
-			xtype: 'combobox',
-			fieldLabel: '父节点',
-			store: parentsFunctionStore,
-			queryMode: 'local',
-			displayField: 'name',
-			valueField: 'code',
-			width: 200,
-			editable: false
-		}, { id: 's_orderby', fieldLabel: '排序', minLength: 2, maxLength: 200, allowBlank: false, width: 200 },
-		{ id: 's_IframeId', fieldLabel: '框架id', minLength: 2, maxLength: 200, allowBlank: false, width: 200 },
-		{ id: 's_IframeName', fieldLabel: '框架名称', minLength: 2, maxLength: 200, allowBlank: false, width: 200 },
-		{ id: 's_IframeSrc', fieldLabel: '框架链接地址', minLength: 2, maxLength: 200, allowBlank: false, width: 200 },
-		{ id: 's_ItemId', fieldLabel: '标签id', minLength: 2, maxLength: 200, allowBlank: false, width: 200 }
+		items: [
+			{ id: 's_btnid', fieldLabel: '按钮控制ID', minLength: 2, maxLength: 200, allowBlank: false, width: 350 },
+			{ id: 's_description', fieldLabel: '节点名称', minLength: 2, maxLength: 200, allowBlank: false, width: 350 },
+			{
+				id: 's_type',
+				xtype: 'combobox',
+				fieldLabel: '功能类型',
+				store: typeStore,
+				queryMode: 'local',
+				displayField: 'name',
+				valueField: 'code',
+				width: 350,
+				editable: false
+			},
+			{
+				id: 's_ParentsDir',
+				xtype: 'combobox',
+				fieldLabel: '父节点',
+				store: parentsFunctionStore,
+				queryMode: 'local',
+				displayField: 'name',
+				valueField: 'code',
+				width: 350,
+				editable: false
+			}, { id: 's_orderby', fieldLabel: '排序', minLength: 2, maxLength: 200, allowBlank: false, width: 350 },
+			{ id: 's_IframeId', fieldLabel: '框架id', minLength: 2, maxLength: 200, allowBlank: false, width: 350 },
+			{ id: 's_IframeName', fieldLabel: '框架名称', minLength: 2, maxLength: 200, allowBlank: false, width: 350 },
+			{ id: 's_IframeSrc', fieldLabel: '框架链接地址', minLength: 2, maxLength: 200, allowBlank: false, width: 350 },
+			{ id: 's_ItemId', fieldLabel: '标签id', minLength: 2, maxLength: 200, allowBlank: false, width: 350 },
+			{ id: 's_remark', xtype: 'textarea', fieldLabel: '功能描述', minLength: 2, maxLength: 200, allowBlank: false, width: 350 }
+
 		],
 		buttons: [{
 			text: '保存', handler: function () {
@@ -246,6 +270,7 @@ function addNewstoreFunction() {
 		listeners: {
 			afterrender: function () {
 				Ext.getCmp('s_ParentsDir').select(parentsFunctionStore.getAt(0));
+				Ext.getCmp('s_type').select(typeStore.getAt(0));
 			}
 		},
 		renderTo: Ext.getBody()
@@ -263,12 +288,23 @@ function saveFunction() {
 		Ext.Msg.alert('错误', '必须填写节点名');
 		return;
 	}
-	var s_ParentsDir = Ext.getCmp('s_ParentsDir').getValue();
-	s_ParentsDir = Ext.String.trim(s_ParentsDir);
-	if (s_ParentsDir == '') {
+	var s_btnid = Ext.getCmp('s_btnid').getValue();
+	s_btnid = Ext.String.trim(s_btnid);
+	if (s_btnid == '') {
+		Ext.Msg.alert('错误', '必须填写按钮控制ID');
+		return;
+	}
+	var s_type = Ext.getCmp('s_type').getValue();
+	s_type = Ext.String.trim(s_type);
+	var s_ParentsId = Ext.getCmp('s_ParentsDir').getValue();
+	s_ParentsId = Ext.String.trim(s_ParentsId);
+	if (s_ParentsId == '') {
 		Ext.Msg.alert('错误', '必须选择父节点');
 		return;
 	}
+	let index = parentsFunctionStore.find('code', s_ParentsId);
+	var s_ParentsDir = parentsFunctionStore.getAt(index).data.name;
+	s_ParentsDir = Ext.String.trim(s_ParentsDir);
 	var s_orderby = Ext.getCmp('s_orderby').getValue();
 	s_orderby = Ext.String.trim(s_orderby);
 	if (s_orderby == '') {
@@ -283,19 +319,25 @@ function saveFunction() {
 	s_IframeSrc = Ext.String.trim(s_IframeSrc);
 	var s_ItemId = Ext.getCmp('s_ItemId').getValue();
 	s_ItemId = Ext.String.trim(s_ItemId);
+	var s_remark = Ext.getCmp('s_remark').getValue();
+	s_remark = Ext.String.trim(s_remark);
 	var model = storeFunction.findRecord('description', s_description);
 	if (model != null) {
 		Ext.Msg.alert('错误', '已存在该节点，请重新填写节点名称');
 		return;
 	}
 	storeFunction.add({
+		btnid: s_btnid,
 		description: s_description,
+		type: s_type,
 		ParentsDir: s_ParentsDir,
+		ParentsId: s_ParentsId,
 		orderby: s_orderby,
 		IframeId: s_IframeId,
 		IframeName: s_IframeName,
 		IframeSrc: s_IframeSrc,
-		ItemId: s_ItemId
+		ItemId: s_ItemId,
+		remark: s_remark
 	});
 	storeFunction.sync({
 		success: function () {
@@ -317,28 +359,42 @@ function editOldstoreFunction() {
 	var _id = selectedData.id;
 	_winEdit = Ext.create('Ext.Window', {
 		title: '修改选择的菜单节点',
-		width: 250,
+		width: 400,
 		layout: 'vbox',
 		defaults: {
 			xtype: 'textfield'
 		},
 		bodyPadding: 5,
-		items: [{ id: 's_description', fieldLabel: '节点名称', minLength: 2, maxLength: 200, allowBlank: false, width: 200, value: selectedData.description },
-		{
-			id: 's_ParentsDir',
-			xtype: 'combobox',
-			fieldLabel: '父节点',
-			store: parentsFunctionStore,
-			queryMode: 'local',
-			displayField: 'name',
-			valueField: 'code',
-			width: 200,
-			editable: false
-		}, { id: 's_orderby', fieldLabel: '排序', minLength: 2, maxLength: 200, allowBlank: false, width: 200, value: selectedData.orderby },
-		{ id: 's_IframeId', fieldLabel: '框架id', minLength: 2, maxLength: 200, allowBlank: false, width: 200, value: selectedData.IframeId },
-		{ id: 's_IframeName', fieldLabel: '框架名称', minLength: 2, maxLength: 200, allowBlank: false, width: 200, value: selectedData.IframeName },
-		{ id: 's_IframeSrc', fieldLabel: '框架链接地址', minLength: 2, maxLength: 200, allowBlank: false, width: 200, value: selectedData.IframeSrc },
-		{ id: 's_ItemId', fieldLabel: '标签id', minLength: 2, maxLength: 200, allowBlank: false, width: 200, value: selectedData.ItemId }
+		items: [
+			{ id: 's_btnid', fieldLabel: '按钮控制ID', minLength: 2, maxLength: 200, allowBlank: false, width: 350, value: selectedData.btnid },
+			{ id: 's_description', fieldLabel: '节点名称', minLength: 2, maxLength: 200, allowBlank: false, width: 350, value: selectedData.description },
+			{
+				id: 's_type',
+				xtype: 'combobox',
+				fieldLabel: '功能类型',
+				store: typeStore,
+				queryMode: 'local',
+				displayField: 'name',
+				valueField: 'code',
+				width: 350,
+				editable: false
+			},
+			{
+				id: 's_ParentsDir',
+				xtype: 'combobox',
+				fieldLabel: '父节点',
+				store: parentsFunctionStore,
+				queryMode: 'local',
+				displayField: 'name',
+				valueField: 'code',
+				width: 350,
+				editable: false
+			}, { id: 's_orderby', fieldLabel: '排序', minLength: 2, maxLength: 200, allowBlank: false, width: 350, value: selectedData.orderby },
+			{ id: 's_IframeId', fieldLabel: '框架id', minLength: 2, maxLength: 200, allowBlank: false, width: 350, value: selectedData.IframeId },
+			{ id: 's_IframeName', fieldLabel: '框架名称', minLength: 2, maxLength: 200, allowBlank: false, width: 350, value: selectedData.IframeName },
+			{ id: 's_IframeSrc', fieldLabel: '框架链接地址', minLength: 2, maxLength: 200, allowBlank: false, width: 350, value: selectedData.IframeSrc },
+			{ id: 's_ItemId', fieldLabel: '标签id', minLength: 2, maxLength: 200, allowBlank: false, width: 350, value: selectedData.ItemId },
+			{ id: 's_remark', xtype: 'textarea', fieldLabel: '功能描述', minLength: 2, maxLength: 200, allowBlank: false, width: 350 }
 		],
 		buttons: [{
 			text: '修改', handler: function () {
@@ -351,8 +407,10 @@ function editOldstoreFunction() {
 		}],
 		listeners: {
 			afterrender: function () {
-				var index = parentsFunctionStore.find('code', selectedData.ParentsId);
+				let index = parentsFunctionStore.find('code', selectedData.ParentsId);
 				Ext.getCmp('s_ParentsDir').select(parentsFunctionStore.getAt(index));
+				index = typeStore.find('code', selectedData.type);
+				Ext.getCmp('s_type').select(typeStore.getAt(index));
 			}
 		},
 		renderTo: Ext.getBody()
@@ -368,12 +426,23 @@ function editUser(sid) {
 		Ext.Msg.alert('错误', '必须填写节点名');
 		return;
 	}
-	var s_ParentsDir = Ext.getCmp('s_ParentsDir').getValue();
-	s_ParentsDir = Ext.String.trim(s_ParentsDir);
-	if (s_ParentsDir == '') {
+	var s_btnid = Ext.getCmp('s_btnid').getValue();
+	s_btnid = Ext.String.trim(s_btnid);
+	if (s_btnid == '') {
+		Ext.Msg.alert('错误', '必须填写按钮控制ID');
+		return;
+	}
+	var s_type = Ext.getCmp('s_type').getValue();
+	s_type = Ext.String.trim(s_type);
+	var s_ParentsId = Ext.getCmp('s_ParentsDir').getValue();
+	s_ParentsId = Ext.String.trim(s_ParentsId);
+	if (s_ParentsId == '') {
 		Ext.Msg.alert('错误', '必须选择父节点');
 		return;
 	}
+	let index = parentsFunctionStore.find('code', s_ParentsId);
+	var s_ParentsDir = parentsFunctionStore.getAt(index).data.name;
+	s_ParentsDir = Ext.String.trim(s_ParentsDir);
 	var s_orderby = Ext.getCmp('s_orderby').getValue();
 	s_orderby = Ext.String.trim(s_orderby);
 	if (s_orderby == '') {
@@ -388,19 +457,20 @@ function editUser(sid) {
 	s_IframeSrc = Ext.String.trim(s_IframeSrc);
 	var s_ItemId = Ext.getCmp('s_ItemId').getValue();
 	s_ItemId = Ext.String.trim(s_ItemId);
-	var model = storeFunction.findRecord('description', s_description);
-	if (model != null) {
-		Ext.Msg.alert('错误', '已存在该节点，请重新填写节点名称');
-		return;
-	}
+	var s_remark = Ext.getCmp('s_remark').getValue();
+	s_remark = Ext.String.trim(s_remark);
 	var record = storeFunction.findRecord('id', sid);
+	record.set('btnid', s_btnid);
 	record.set('description', s_description);
 	record.set('ParentsDir', s_ParentsDir);
+	record.set('ParentsId', s_ParentsId);
+	record.set('type', s_type);
 	record.set('orderby', s_orderby);
 	record.set('IframeId', s_IframeId);
 	record.set('IframeName', s_IframeName);
 	record.set('IframeSrc', s_IframeSrc);
 	record.set('ItemId', s_ItemId);
+	record.set('remark', s_remark);
 
 	storeFunction.sync({
 		success: function () {
@@ -452,6 +522,7 @@ function GetAllFunction() {
              {name: 'name', type: 'string'}
              ]);*/
 			if (joRes) {
+				parentsFunctionStore.add({ code: '2', name: '非菜单节点' });
 				parentsFunctionStore.add({ code: '1', name: '没有父节点' });
 				for (var i = 0; i < joRes.rows.length; i++) {
 					parentsFunctionStore.add({ code: joRes.rows[i].id, name: joRes.rows[i].name });

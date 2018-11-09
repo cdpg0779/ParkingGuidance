@@ -7,59 +7,12 @@ var grid = null;
 var _winNew = null;
 var _winEdit = null;
 
-/*
- * 单位下拉列表
- * */
-
-var deptmentStore = Ext.create('Ext.data.Store', {
-    fields: ['code', 'name'],
-    data: [
-    ]
-});
-
-/*
- * 领导下拉列表
- * */
-
-var chargerStore = Ext.create('Ext.data.Store', {
-    fields: ['code', 'name'],
-    data: [{ "code": "刘兵", "name": "刘兵" },
-    { "code": "杜进有", "name": "杜进有" },
-    { "code": "易传斌", "name": "易传斌" },
-    { "code": "王宏", "name": "王宏" },
-    { "code": "涂智", "name": "涂智" },
-    { "code": "田贵文", "name": "田贵文" },
-    { "code": "王增勇", "name": "王增勇" },
-    { "code": "郭海涛", "name": "郭海涛" },
-    { "code": "张子祥", "name": "张子祥" }
-    ]
-});
 
 
-var levelgroupStore = Ext.create('Ext.data.Store', {
-    fields: ['code', 'name'],
-    data: [{ "code": "领导组", "name": "领导组" },
-    { "code": "机关处室组", "name": "机关处室组" },
-    { "code": "区县交通局", "name": "区县交通局" }
-    ]
-});
 
-/*
- * 职位下拉列表
- * */
 
-var dutyStore = Ext.create('Ext.data.Store', {
-    fields: ['code', 'name'],
-    data: [
-        { "code": "委领导", "name": "委领导" },
-        { "code": "机关党委书记", "name": "机关党委书记" },
-        { "code": "院长", "name": "院长" },
-        { "code": "处长", "name": "处长" },
-        { "code": "副主任", "name": "副主任" },
-        { "code": "巡视员", "name": "巡视员" },
-        { "code": "总队长", "name": "总队长" }
-    ]
-});
+
+
 
 /*
  * 用户组下拉列表
@@ -74,7 +27,6 @@ var roleStore = Ext.create('Ext.data.Store', {
 (function () {
     Ext.onReady(function () {
         GetUsersRole();
-        Getdeptment();
         /*
          * 注册用户账户数据模型
          * */
@@ -188,8 +140,7 @@ var roleStore = Ext.create('Ext.data.Store', {
             { text: '登录名', dataIndex: 'loginname', align: 'center', width: 200 },
             { text: '姓名', dataIndex: 'name', width: 120, align: 'center' },
             { text: '手机号码', dataIndex: 'telphone', width: 200, align: 'center' },
-            { text: '部门', dataIndex: 'deptment' }],
-
+            { text: '用户角色', dataIndex: 'role', width: 200, align: 'center' }],
             bbar: [{
                 xtype: 'pagingtoolbar',
                 store: storeUsers,
@@ -319,16 +270,6 @@ function addNewstoreUsers() {
             displayField: 'name',
             valueField: 'code',
             editable: false
-        },
-        {
-            id: 's_deptment',
-            xtype: 'combobox',
-            fieldLabel: '单位',
-            store: deptmentStore,
-            queryMode: 'local',
-            displayField: 'name',
-            valueField: 'code',
-            editable: false
         }
         ],
         buttons: [{
@@ -343,7 +284,6 @@ function addNewstoreUsers() {
         listeners: {
             afterrender: function () {
                 Ext.getCmp('s_user_role').select(roleStore.getAt(0));
-                Ext.getCmp('s_deptment').select(deptmentStore.getAt(0));
             }
         },
         renderTo: Ext.getBody()
@@ -382,7 +322,6 @@ function saveUsers() {
         Ext.Msg.alert('错误', '必须选择用户角色');
         return;
     }
-    var deptment = Ext.getCmp('s_deptment').getValue();
     var telphone = Ext.getCmp('s_telphone').getValue();
     var sortorder = Ext.getCmp('s_sortorder').getValue();
 
@@ -391,7 +330,6 @@ function saveUsers() {
         password: password,
         name: name,
         role: role,
-        deptment: deptment,
         telphone: telphone,
         sortorder: sortorder
     });
@@ -480,17 +418,6 @@ function editOldstoreUsers() {
             displayField: 'name',
             valueField: 'code',
             editable: false
-        },
-
-        {
-            id: 's_deptment',
-            xtype: 'combobox',
-            fieldLabel: '部门',
-            store: deptmentStore,
-            queryMode: 'local',
-            displayField: 'name',
-            valueField: 'code',
-            editable: false
         }
         ],
         buttons: [{
@@ -506,8 +433,6 @@ function editOldstoreUsers() {
             afterrender: function () {
                 var index = roleStore.find('code', selectedData.role);
                 Ext.getCmp('s_user_role').select(roleStore.getAt(index));
-                index = deptmentStore.find('code', selectedData.deptmentid);
-                Ext.getCmp('s_deptment').select(deptmentStore.getAt(index));
             }
         },
         renderTo: Ext.getBody()
@@ -539,7 +464,6 @@ function editUser(sid) {
         Ext.Msg.alert('错误', '必须选择用户角色');
         return;
     }
-    var deptment = Ext.getCmp('s_deptment').getValue();
     var telphone = Ext.getCmp('s_telphone').getValue();
     var type = Ext.getCmp('s_type').getValue();
     var sortorder = Ext.getCmp('s_sortorder').getValue();
@@ -547,7 +471,6 @@ function editUser(sid) {
     record.set('loginname', loginname);
     record.set('password', password);
     record.set('name', name);
-    record.set('deptment', deptment);
     record.set('role', role);
     record.set('telphone', telphone);
     // record.set('type', type);
@@ -664,17 +587,6 @@ function editusersrole() {
             displayField: 'name',
             valueField: 'code',
             editable: false
-        },
-        {
-            id: 's_deptment',
-            xtype: 'combobox',
-            fieldLabel: '部门',
-            store: deptmentStore,
-            queryMode: 'local',
-            displayField: 'name',
-            valueField: 'code',
-            editable: false,
-            hidden: true
         }
         ],
         buttons: [{
@@ -690,8 +602,6 @@ function editusersrole() {
             afterrender: function () {
                 var index = roleStore.find('code', selectedData.role);
                 Ext.getCmp('s_user_role').select(roleStore.getAt(index));
-                index = deptmentStore.find('code', selectedData.deptment);
-                Ext.getCmp('s_deptment').select(deptmentStore.getAt(index));
 
             }
         },
@@ -738,7 +648,7 @@ function testmob() {
     Ext.Ajax.request({
         /* url: '/appif/supervisordetail',
          params: {start:0,pagesize:12,userid:'17866d8840497bc46ef2d7ccc273aa7f'},*/
-        url: '/appService/GetDateList',
+        url: '/exportDatabaseTool/backupDataTiming',
         params: { staffid: '8930a9366cb0c32117169919f98c55a5', userid: '81b10a007e3b1b0126feb1c5d36bc6c3', attachmentid: '3bf44318652665b479f184983324f4a7', mediatype: '0', uri: 'upload/81b10a007e3b1b0126feb1c5d36bc6c31495851668778-1495851794000.jpg', participants: '32c3c4a14e3216fb2c17c733baa53107,32fbbec6b760aaf78001ab1664c97695,3ac2ac15672830fa477b8789f66269bf', description_supplement: 'dasdadsasdt_task_supplementdasdasdasd', log: 1, start: 0, pagesize: 10 },
         method: 'POST',
         success: function (response, options) {
@@ -759,32 +669,4 @@ function testmob() {
 }
 
 
-/*
- * 拿到单位数据
- * */
-function Getdeptment() {
-    Ext.Ajax.request({
-        url: 'users/deptmentalldata',
-        method: 'POST',
-        success: function (response, options) {
-            var joRes = Ext.JSON.decode(response.responseText);
-            joRes = eval(joRes);
-            var data = [];
-            /*  var PersonRecord = Ext.data.Record.create([
-             {name: 'code', type: 'string'},
-             {name: 'name', type: 'string'}
-             ]);*/
-            if (joRes) {
-                for (var i = 0; i < joRes.rows.length; i++) {
-                    deptmentStore.add({ code: joRes.rows[i].id, name: joRes.rows[i].deptment });
-                    /* data.push(["code :"+joRes.rows[i].id,"name :"+joRes.rows[i].rolename]);*/
-                }
-                deptmentStore.sync();
-                /* roleStore.data. =data;*/
-            }
-        },
-        failure: function (response, options) {
-            Ext.MessageBox.alert('失败', '请求失败,错误码：' + response.status);
-        }
-    });
-}
+
