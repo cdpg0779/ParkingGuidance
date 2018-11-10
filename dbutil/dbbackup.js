@@ -72,17 +72,15 @@ DBbackup.backupDataTiming = function (userid, interval, res) {
         if (j != null) {
             j.cancel();
             j = null;
-            mysqlClient.query(sql, [], function (err, recs) {
-                if (err) {
-                    console.log(err);
-                    res.send(JSON.stringify({ state: -1 }));
-                    return;
-                }
-                return res.send(JSON.stringify({ state: 0, msg: "取消自动定时成功!" }));
-            });
-        } else {
-            return res.send(JSON.stringify({ state: 0, msg: "取消自动定时成功!" }));
         }
+        mysqlClient.query(sql, [], function (err, recs) {
+            if (err) {
+                console.log(err);
+                res.send(JSON.stringify({ state: -1 }));
+                return;
+            }
+            return res.send(JSON.stringify({ state: 0, msg: "取消自动定时成功!" }));
+        });
     } else { //设置自动定时
         var updateTime = new Date().toLocaleString();
         var sql = "insert into t_backup_config(id,second,minute,hour,dayofmonth,month,dayofweek,type,updateTime,userid) values(replace(uuid(),'-',''),?,?,?,?,?,?,?,?,?)";
@@ -135,15 +133,64 @@ DBbackup.getBackupConfig = function (res) {
             res.send(JSON.stringify({ state: -1 }));
             return;
         }
-        let ren = { state: 0, rows: [{}] };
+        let ren = { state: 0, rows: [{ dayofweek: 0, month: 0, dayofmonth: 0, hour: 0, minute: 0, second: 0 }] };
         if (recs.length != 0) {
             ren.rows = recs;
         }
-
         res.send(JSON.stringify(ren));
     });
 }
 
+DBbackup.restoreDataBase = function (userid, id, res) {
+    var sql = "select fileName from t_backup where id=?";
+    var pms = [id];
+    var num = 0;
+    mysqlClient.query(sql, pms, function (err, recs) {
+        if (err) {
+            console.log(err);
+            res.send(JSON.stringify({ state: -1, msg: err }));
+            return;
+        }
+        var filename = recs[0].fileName ? recs[0].fileName : "";
+        if (filename != "") {
+            exec(beifenPath, function (error, stdout, stderr) { //备份数据库文件
+                if (error) {
+                    console.log(error);
+                    res.send(JSON.stringify({ state: -1, msg: error }));
+                    return;
+                }
+                else {
+                    var fileName = stdout.substring(stdout.lastIndexOf('/') + 1, stdout.lastIndexOf('.sql') + 4);
+                    var filePath = beifenDir + "\\" + fileName;
+                    var backupTime = new Date().toLocaleString();
+                    sql = "insert into t_backup(id,fileName,backupTime,userid) values(replace(uuid(),'-',''),?,?,?)";
+                    pms = [filePath, backupTime, userid];
+                    mysqlClient.query(sql, pms, function (err, recs) {
+                        if (err) {
+                            console.log(err);
+                            res.send(JSON.stringify({ state: -1 }));
+                            return;
+                        }
+                        var cle = "C: && cd C:/Program Files/MySQL/MySQL Server 5.7/bin && mysql -uroot -p123456 parkingguidance<" + filename + "";
+                        exec(cle, function (error, stdout, stderr) { //备份数据库文件
+                            if (error) {
+                                console.log(error);
+                                res.send(JSON.stringify({ state: -1, msg: error }));
+                                return;
+                            }
+                            else {
+                                let ren = { state: 0, msg: "还原数据库成功！已将当前数据库备份为" + filePath };
+                                res.send(JSON.stringify(ren));
+                                return;
+                            }
+                        });
+                    });
+                }
+            });
+
+        }
+    });
+}
 
 /**
  *得到Guid

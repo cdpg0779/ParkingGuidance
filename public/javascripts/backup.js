@@ -152,16 +152,19 @@ var roleStore = Ext.create('Ext.data.Store', {
                                 var roleid_only = Ext.getCmp('backupDataOnlyOne_btn');
                                 var roleid_timing = Ext.getCmp('openBackupDataTimingWindow_btn');
                                 var roleid_del = Ext.getCmp('backupData_del_btn');
+                                var roleid_restore = Ext.getCmp('restoreDataBase_btn');
                                 /*现将所有的按钮隐藏，然后根据权限来打开按钮*/
                                 roleid_only.setVisible(false);
                                 roleid_timing.setVisible(false);
                                 roleid_del.setVisible(false);
+                                roleid_restore.setVisible(false);
                                 Ext.Ajax.request({
                                     url: '/users/getRoleIdByBtnId',
                                     params: {
                                         add: "backup_all_btn",
                                         edit: "backup_all_btn",
-                                        del: "backup_all_btn"
+                                        del: "backup_all_btn",
+                                        role: "backup_all_btn"
                                     },
                                     method: 'POST',
                                     success: function (r, o) {
@@ -169,13 +172,16 @@ var roleStore = Ext.create('Ext.data.Store', {
                                         var only_id = role.add;
                                         var timing_id = role.edit;
                                         var del_id = role.del;
+                                        var restore_id = role.role;
                                         for (var i = 0; i < joRes.length; i++) {
                                             if (joRes[i] == only_id) roleid_only.setVisible(true);
                                             if (joRes[i] == timing_id) roleid_timing.setVisible(true);
                                             if (joRes[i] == del_id) roleid_del.setVisible(true);
+                                            if (joRes[i] == restore_id) roleid_restore.setVisible(true);
                                         }
                                         var selections = e.getSelectionModel().getSelection();
                                         e.down('#del_btn').setDisabled(selections.length == 0);
+                                        e.down('#restoreDataBase_btn').setDisabled(selections.length != 1);
                                     }
                                 });
                             }
@@ -189,12 +195,14 @@ var roleStore = Ext.create('Ext.data.Store', {
             tbar: [
                 { itemId: 'del_btn', text: '删除', iconCls: 'Delete', handler: deletestoreUsers, id: 'backupData_del_btn' },
                 { itemId: 'backupDataOnlyOne_btn', text: '备份', iconCls: 'Add', handler: backupDataOnlyOne, id: 'backupDataOnlyOne_btn' },
-                { itemId: 'openBackupDataTimingWindow_btn', text: '设置自动备份', iconCls: 'Add', handler: openBackupDataTimingWindow, id: 'openBackupDataTimingWindow_btn' }
+                { itemId: 'openBackupDataTimingWindow_btn', text: '设置自动备份', iconCls: 'Add', handler: openBackupDataTimingWindow, id: 'openBackupDataTimingWindow_btn' },
+                { itemId: 'restoreDataBase_btn', text: '还原数据库', iconCls: 'Add', handler: restoreDataBase, id: 'restoreDataBase_btn' },
             ]
         });
 
         grid.getSelectionModel().on('selectionchange', function (selModel, selections) {
             grid.down('#del_btn').setDisabled(selections.length == 0);
+            grid.down('#restoreDataBase_btn').setDisabled(selections.length != 1);
         });
     });
 })();
@@ -202,7 +210,31 @@ var roleStore = Ext.create('Ext.data.Store', {
 /*
  * 备份一次
  * */
-function backupDataOnlyOne() { }
+function backupDataOnlyOne() {
+    Ext.Msg.confirm('系统提示', '确定要备份数据库吗？', function (btn) {
+        if (btn == 'yes') {
+            Ext.Ajax.request({
+                /* url: '/appif/supervisordetail',
+                 params: {start:0,pagesize:12,userid:'17866d8840497bc46ef2d7ccc273aa7f'},*/
+                url: '/backup/backupDataOnlyOne',
+                params: {},
+                method: 'POST',
+                success: function (response, options) {
+                    var joRes = Ext.JSON.decode(response.responseText);
+                    joRes = eval(joRes);
+                    var data = [];
+                    if (joRes.state == 0) {
+                        Ext.MessageBox.alert('成功', joRes.msg);
+                        _winNew.close();
+                    }
+                },
+                failure: function (response, options) {
+                    Ext.MessageBox.alert('失败', '请求失败,错误码：' + response.status);
+                }
+            });
+        }
+    }, this);
+}
 
 /*
  * 打开设置备份时间窗口
@@ -247,7 +279,7 @@ function openBackupDataTimingWindow() {
     _winNew.show();
 }
 
-
+//保存定时备份信息
 function saveBackupDataTiming() {
     var dayofweek = Ext.getCmp('s_dayofweek').getValue();
 
@@ -296,6 +328,7 @@ function saveBackupDataTiming() {
             if (joRes.state == 0) {
                 Ext.MessageBox.alert('成功', joRes.msg);
                 _winNew.close();
+                configData();
             }
         },
         failure: function (response, options) {
@@ -309,17 +342,48 @@ function saveBackupDataTiming() {
  * 删除选定的用户
  * */
 function deletestoreUsers() {
-    var selections = grid.getSelectionModel().getSelection();
-    storeUsers.remove(selections);
-    storeUsers.sync({
-        success: function () {
-            storeUsers.reload();
-            _winEdit.close();
-        },
-        failure: function () {
-            Ext.Msg.alert('错误', '删除用户信息失败');
+    Ext.Msg.confirm('系统提示', '确定要删除数据库备份信息吗？这样会使操作不可逆!', function (btn) {
+        if (btn == 'yes') {
+            var selections = grid.getSelectionModel().getSelection();
+            storeUsers.remove(selections);
+            storeUsers.sync({
+                success: function () {
+                    storeUsers.reload();
+                    _winEdit.close();
+                },
+                failure: function () {
+                    Ext.Msg.alert('错误', '删除用户信息失败');
+                }
+            });
         }
-    });
+    }, this);
+}
+
+function restoreDataBase() {
+    Ext.Msg.confirm('系统提示', '确定要还原数据库吗？这样会使操作不可逆!', function (btn) {
+        if (btn == 'yes') {
+            var selectedData = grid.getSelectionModel().getSelection()[0];
+            selectedData = grid.getStore().getById(selectedData.get('id')).data;
+            var _id = selectedData.id;
+            Ext.Ajax.request({
+                /* url: '/appif/supervisordetail',
+                 params: {start:0,pagesize:12,userid:'17866d8840497bc46ef2d7ccc273aa7f'},*/
+                url: '/backup/restoreDataBase',
+                params: { id: _id },
+                method: 'POST',
+                success: function (response, options) {
+                    var joRes = Ext.JSON.decode(response.responseText);
+                    joRes = eval(joRes);
+                    if (joRes.state == 0) {
+                        Ext.MessageBox.alert('成功', joRes.msg);
+                    }
+                },
+                failure: function (response, options) {
+                    Ext.MessageBox.alert('失败', '请求失败,错误码：' + response.status);
+                }
+            });
+        }
+    }, this);
 }
 
 

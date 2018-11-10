@@ -109,5 +109,16 @@ router.post('/getBackupConfig', function (req, res, next) {
     DBbackup.getBackupConfig(res);
 });
 
+router.post('/restoreDataBase', function (req, res, next) {
+    var b = GetUserPermissions(req);
+    if (!b) {
+        res.redirect('/');
+        return;
+    }
+    var userid = req.session.user.id;
+    var id = req.body.id;
+    DBbackup.restoreDataBase(userid, id, res);
+});
+
 
 module.exports = router;
