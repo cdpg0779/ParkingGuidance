@@ -48,33 +48,8 @@ router.post('/deleteBackup', function (req, res, next) {
         return;
     }
     let rows = req.body;
-    let sql = 'delete from t_backup';
-    if (rows instanceof Array) {
-        let str = "";
-        rows.forEach(function (_row, index, array) {
-            if (index != 0) str += ",";
-            str += "'" + _row.id + "'";
-        });
-        sql = sql + " where id in (" + str + ")";
-        let params = [];
-        mysqlClient.query(sql, params, function (err, result) {
-            if (err) {
-                console.log(err);
-                res.send("{'state':-1}");
-            } else
-                res.send("{'state':0}");
-        });
-    } else {
-        sql = sql + " where id=?";
-        let params = [req.body.id];
-        mysqlClient.query(sql, params, function (err, result) {
-            if (err) {
-                console.log(err);
-                res.send("{'state':-1}");
-            } else
-                res.send("{'state':0}");
-        });
-    }
+    let userid = req.session.user.id;
+    DBbackup.deleteBackup(userid, rows, res);
 });
 
 

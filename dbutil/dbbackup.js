@@ -2,6 +2,7 @@
  *接口存取数据库操作封装
  */
 var mysqlClient = require('./mysqlclient');
+var DBTool = require('./dbtool');
 var qs = require('querystring');
 var http = require('http');
 var schedule = require('node-schedule');
@@ -27,7 +28,7 @@ DBbackup.backupall = function (_start, _pageSize, res) {
         }
         let ren = { state: 0, rows: recs };
         if (recs.length > 0)
-            ren.total = recs.length;
+            ren.total = recs[0].total;
         else
             ren.total = 0;
         res.send(JSON.stringify(ren));
@@ -35,12 +36,52 @@ DBbackup.backupall = function (_start, _pageSize, res) {
 }
 
 
+//删除数据库备份
+DBbackup.deleteBackup = function (userid, rows, res) {
+    let sql = 'delete from t_backup';
+    if (rows instanceof Array) {
+        let str = "";
+        rows.forEach(function (_row, index, array) {
+            if (index != 0) str += ",";
+            str += "'" + _row.id + "'";
+        });
+        sql = sql + " where id in (" + str + ")";
+        let params = [];
+        mysqlClient.query(sql, params, function (err, result) {
+            if (err) {
+                console.log(err);
+                res.send("{'state':-1}");
+            } else {
+                let msg = '删除数据库备份成功';
+                let ren = { state: 0, msg: msg };
+                DBTool.writeLog(mysqlClient, userid, msg, ren, res);
+            }
+        });
+    } else {
+        sql = sql + " where id=?";
+        let params = [req.body.id];
+        mysqlClient.query(sql, params, function (err, result) {
+            if (err) {
+                console.log(err);
+                res.send("{'state':-1}");
+            } else {
+                let msg = '删除数据库备份成功';
+                let ren = { state: 0, msg: msg };
+                DBTool.writeLog(mysqlClient, userid, msg, ren, res);
+            }
+        });
+    }
+}
+
+
+//备份一次
 DBbackup.backupDataOnlyOne = function (userid, res) {
     exec(beifenPath, function (error, stdout, stderr) {
         if (error) {
             console.log(error);
-        }
-        else {
+            res.send(JSON.stringify({ state: -1, msg: error }));
+            return;
+        } else {
             var fileName = stdout.substring(stdout.lastIndexOf('/') + 1, stdout.lastIndexOf('.sql') + 4);
             var filePath = beifenDir + "\\" + fileName;
             var backupTime = new Date().toLocaleString();
@@ -52,8 +93,9 @@ DBbackup.backupDataOnlyOne = function (userid, res) {
                     res.send(JSON.stringify({ state: -1 }));
                     return;
                 }
-                let ren = { state: 0, msg: "备份成功，已备份成文件" + filePath };
-                res.send(JSON.stringify(ren));
+                let msg = "备份数据库成功，已备份成文件" + filePath;
+                let ren = { state: 0, msg: msg };
+                DBTool.writeLog(mysqlClient, userid, msg, ren, res);
             });
         }
     });
@@ -79,7 +121,9 @@ DBbackup.backupDataTiming = function (userid, interval, res) {
                 res.send(JSON.stringify({ state: -1 }));
                 return;
             }
-            return res.send(JSON.stringify({ state: 0, msg: "取消自动定时成功!" }));
+            let msg = "取消自动定时成功!";
+            let ren = { state: 0, msg: msg };
+            DBTool.writeLog(mysqlClient, userid, msg, ren, res);
         });
     } else { //设置自动定时
         var updateTime = new Date().toLocaleString();
@@ -91,8 +135,9 @@ DBbackup.backupDataTiming = function (userid, interval, res) {
                 res.send(JSON.stringify({ state: -1 }));
                 return;
             }
-            let ren = { state: 0, msg: "设置自动备份成功" };
-            res.send(JSON.stringify(ren));
+            let msg = "设置自动备份成功!";
+            let ren = { state: 0, msg: msg };
+            DBTool.writeLog(mysqlClient, userid, msg, ren, res);
             if (j != null) {
                 j.cancel();
                 j = null;
@@ -112,7 +157,6 @@ DBbackup.backupDataTiming = function (userid, interval, res) {
                         mysqlClient.query(sql, pms, function (err, recs) {
                             if (err) {
                                 console.log(err);
-                                res.send(JSON.stringify({ state: -1 }));
                                 return;
                             }
                         });
@@ -179,9 +223,9 @@ DBbackup.restoreDataBase = function (userid, id, res) {
                                 return;
                             }
                             else {
-                                let ren = { state: 0, msg: "还原数据库成功！已将当前数据库备份为" + filePath };
-                                res.send(JSON.stringify(ren));
-                                return;
+                                let msg = "还原数据库成功！已将当前数据库备份为" + filePath;
+                                let ren = { state: 0, msg: msg };
+                                DBTool.writeLog(mysqlClient, userid, msg, ren, res);
                             }
                         });
                     });

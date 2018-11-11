@@ -21,6 +21,25 @@ DBTool.State = {
 
 
 /**
+ * 写入log
+ */
+DBTool.writeLog = function (mysqlClient, userid, remark, dataRows, res) {
+    var createtime = new Date().toLocaleString();
+    var sql = "insert into t_log(id,userid,createtime,operation) values(replace(uuid(),'-',''),?,?,?)";
+    var pms = [userid, createtime, remark];
+    mysqlClient.query(sql, pms, function (err, recs) {
+        if (err) {
+            console.log(err);
+        }
+        console.log("插入日志成功");
+        if (res) {
+            res.send(JSON.stringify(dataRows));
+        }
+    });
+}
+
+
+/**
  * 获取本机IP
  */
 DBTool.getIPAdress = function () {
@@ -42,14 +61,14 @@ DBTool.getIPAdress = function () {
  * @return {}
  */
 DBTool.replaceNewLine = function (strContent) {
-	var regR = /\r/g;
-	var regN = /\n/g;
-	var regT = /\t/g;
-	var regSimon = /\"/g;
-	var regSpSign = //g;
-	var regP = /\\/g;
-	var newContent = strContent.replace(regR, "").replace(regN, "").replace(regT, "").replace(regSimon, "'").replace(regSpSign, "").replace(regP, "");
-	return newContent;
+    var regR = /\r/g;
+    var regN = /\n/g;
+    var regT = /\t/g;
+    var regSimon = /\"/g;
+    var regSpSign = //g;
+    var regP = /\\/g;
+    var newContent = strContent.replace(regR, "").replace(regN, "").replace(regT, "").replace(regSimon, "'").replace(regSpSign, "").replace(regP, "");
+    return newContent;
 };
 
 /**
